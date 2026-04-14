@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Perception study</title>
+  <style>
+    /* Mobile-first: flexible layout, large touch targets */
+    :root {
+      --bg: #0f1115;
+      --fg: #e8eaed;
+      --muted: #9aa0a6;
+      --accent: #8ab4f8;
+      --card: #1a1d24;
+      --border: #2d3139;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      padding: 0.75rem;
+      padding-bottom: 2rem;
+    }
+    header {
+      max-width: 36rem;
+      margin: 0 auto 1rem;
+      text-align: center;
+    }
+    h1 { font-size: 1.1rem; font-weight: 600; margin: 0 0 0.35rem; }
+    .progress { font-size: 0.95rem; color: var(--muted); }
+    .instructions {
+      max-width: 36rem;
+      margin: 0 auto 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .center-wrap {
+      max-width: min(100%, 22rem);
+      margin: 0 auto 1.25rem;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .center-wrap img {
+      display: block;
+      width: 100%;
+      height: auto;
+      vertical-align: middle;
+    }
+    .label-row {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    /* 2×2 grid of option buttons */
+    form.options-form {
+      max-width: 22rem;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .option-btn {
+      display: block;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 44px; /* touch-friendly */
+    }
+    .option-btn:active { border-color: var(--accent); }
+    .option-btn img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+    .done-box {
+      max-width: 24rem;
+      margin: 3rem auto;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      text-align: center;
+    }
+    .done-box p { margin: 0.5rem 0; color: var(--muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Which image is most similar?</h1>
+    {% if not done %}
+    <p class="progress">Trial {{ current_num }} of {{ total }}</p>
+    {% endif %}
+  </header>
+
+  {% if done %}
+  <div class="done-box">
+    <p><strong>Thank you.</strong></p>
+    <p>All trials are complete. Your responses were saved on the server.</p>
+  </div>
+  {% else %}
+  <p class="instructions">
+    Tap the option below that best matches the <strong>center</strong> image.
+  </p>
+
+  <p class="label-row">Reference (synthetic)</p>
+  <div class="center-wrap">
+    <img
+      src="{{ url_for('static', filename='images/' + trial.center) }}"
+      alt="Reference image"
+      loading="lazy"
+    />
+  </div>
+
+  <p class="label-row">Choose one</p>
+  <form class="options-form" method="post" action="{{ url_for('submit') }}">
+    {% for opt in options %}
+    <button class="option-btn" type="submit" name="position" value="{{ loop.index0 }}" aria-label="Option {{ loop.index }}">
+      <img
+        src="{{ url_for('static', filename='images/' + opt) }}"
+        alt="Option {{ loop.index }}"
+        loading="lazy"
+      />
+    </button>
+    {% endfor %}
+  </form>
+  {% endif %}
+</body>
+</html>
