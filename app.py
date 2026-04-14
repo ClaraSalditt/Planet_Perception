@@ -147,7 +147,10 @@ def submit():
 
 
 if __name__ == "__main__":
-    # Local development: http://127.0.0.1:5000 — use 0.0.0.0 to reach from phone on same Wi‑Fi.
-    app.run(host=os.environ.get("HOST", "0.0.0.0"), port=int(os.environ.get("PORT", "5000")), debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
+    )
 
 
